@@ -12,15 +12,17 @@ class TestBasic(BaseTestCase):
         delete = self.magneto(textMatches='del|clr')
         delete.long_click()
 
+        formula = self.magneto(className='android.widget.EditText')
+        while formula.exists:
+            delete.click()
+
     def test_result(self):
         """
         Test calculation and assert result
         """
 
-        formula = self.magneto(resourceId='me.everything.magnetodemo:id/formula')\
-            .child(className='android.widget.EditText')
-        result = self.magneto(resourceId='me.everything.magnetodemo:id/result')\
-            .child(className='android.widget.EditText')
+        formula = self.magneto(className='android.widget.EditText', instance=0)
+        result = self.magneto(className='android.widget.EditText', instance=1)
 
         self.magneto(text='2').click()
         self.magneto(text='×').click()
@@ -35,8 +37,7 @@ class TestBasic(BaseTestCase):
         Test that a comma is added to formula number
         """
 
-        formula = self.magneto(resourceId='me.everything.magnetodemo:id/formula')\
-            .child(className='android.widget.EditText')
+        formula = self.magneto(className='android.widget.EditText', instance=0)
 
         for i in range(1,5):
             self.magneto(text=i).click()
@@ -47,8 +48,7 @@ class TestBasic(BaseTestCase):
         """
         Test that formula font decreases as content increases
         """
-        formula = self.magneto(resourceId='me.everything.magnetodemo:id/formula')\
-            .child(className='android.widget.EditText')
+        formula = self.magneto(className='android.widget.EditText', instance=0)
         digit_9 = self.magneto(resourceId='me.everything.magnetodemo:id/digit_9')
 
         # get initial bounds

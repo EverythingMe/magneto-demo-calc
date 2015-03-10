@@ -17,59 +17,52 @@ class TestAdvanced(BaseTestCase):
         Test drawer in/out by swipe
         """
 
-        drawer = self.magneto(resourceId='me.everything.magnetodemo:id/pad_advanced')
-        drawer_children = drawer.child(className='android.widget.Button')
+        content = self.magneto(resourceId='android:id/content')
+        sin_button = self.magneto(resourceId='me.everything.magnetodemo:id/fun_sin')
 
         # check that drawer has no inner elements
-        Assert.false(len(drawer_children))
+        Assert.false(sin_button.exists)
 
         # swipe it in
-        _, y = drawer.center()
-        self.magneto.drag(drawer, 0, y, steps=10)
+        content.swipe.left()
 
         # check that drawer is populated
-        Assert.true(len(drawer_children))
+        Assert.true(sin_button.exists)
 
         # swipe drawer back
-        drawer.swipe.right()
+        self.magneto.press.back()
 
     def test_drawer_by_orientation(self):
         """
         Test drawer in/out by orientation change
         """
 
-        drawer = self.magneto(resourceId='me.everything.magnetodemo:id/pad_advanced')
-        drawer_children = drawer.child(className='android.widget.Button')
-
-        # check that drawer has no inner elements
-        Assert.false(len(drawer_children))
+        # check that the sin button is hidden
+        sin_button = self.magneto(resourceId='me.everything.magnetodemo:id/fun_sin')
+        Assert.false(sin_button.exists)
 
         # change to landscape
         self.magneto.orientation = 'r'
+        self.magneto.wait.idle()
 
-        # check that drawer is populated
-        Assert.true(len(drawer_children))
+        # check that the sin button is visible
+        Assert.true(sin_button.exists)
 
         # change back
         self.magneto.orientation = 'n'
+        self.magneto.wait.idle()
 
     def test_power(self):
-        formula = self.magneto(resourceId='me.everything.magnetodemo:id/formula')\
-            .child(className='android.widget.EditText')
-
         self.magneto(text='2').click()
 
-        # swipe in drawer
-        drawer = self.magneto(resourceId='me.everything.magnetodemo:id/pad_advanced')
-        _, y = drawer.center()
-        self.magneto.drag(drawer, 0, y, steps=10)
-
-        # power button
+        # swipe in drawer, click power button and dismiss
+        content = self.magneto(resourceId='android:id/content')
+        content.swipe.left()
         self.magneto(text='^').click()
-
-        # swipe drawer back
-        drawer.swipe.right()
+        self.magneto.press.back()
 
         self.magneto(text='3').click()
         self.magneto(text='=').click()
+
+        formula = self.magneto(className='android.widget.EditText')
         Assert.true(formula.info['text'] == '8')
